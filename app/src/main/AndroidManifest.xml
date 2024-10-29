@@ -13,6 +13,18 @@
         android:theme="@style/Theme.School"
         tools:targetApi="31">
         <activity
+            android:name=".FinalGradesPage"
+            android:exported="false" />
+        <activity
+            android:name=".EnterGradesPage"
+            android:exported="false" />
+        <activity
+            android:name=".AddEvalsPage"
+            android:exported="false" />
+        <activity
+            android:name=".EvaluationsPage"
+            android:exported="false" />
+        <activity
             android:name=".StudentInfoPage"
             android:exported="false" />
         <activity
