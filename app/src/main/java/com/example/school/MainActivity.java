@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 String user = txtUser.getText().toString();
                 String pass = txtPass.getText().toString();
 
+                //need to figure out where the teacher gets the login credentials
                 //SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                 String savedUser = "Teacher";//sharedPreferences.getString("username", null);
                 String savedPass = "Passward";//sharedPreferences.getString("password", null);
