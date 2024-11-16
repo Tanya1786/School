@@ -2,7 +2,11 @@ package com.example.school;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +14,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class FindStudentPage extends AppCompatActivity {
+public class FindStudentPage extends AppCompatActivity
+implements AdapterView.OnItemSelectedListener {
     Spinner spClasses, spStudents;
+
+    String[] divisions = {"5", "19", "22", "10", "15", "30", "25"};
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -27,15 +34,21 @@ public class FindStudentPage extends AppCompatActivity {
 
         spClasses = findViewById(R.id.spClasses);
         spStudents = findViewById(R.id.spStudents);
-        // Create an ArrayAdapter using the string array and a default spinner layout.
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//                this,
-//                R.array.divisions,
-//                android.R.layout.simple_spinner_item
-//        );
-//        // Specify the layout to use when the list of choices appears.
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        // Apply the adapter to the spinner.
-//        spClasses.setAdapter(adapter);
+
+        //Creating the ArrayAdapter instance having the country list
+        ArrayAdapter classes = new ArrayAdapter(this,android.R.layout.simple_spinner_item, divisions);
+        classes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Setting the ArrayAdapter data on the Spinner
+        spClasses.setAdapter(classes);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Toast.makeText(getApplicationContext(),divisions[i], Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }
