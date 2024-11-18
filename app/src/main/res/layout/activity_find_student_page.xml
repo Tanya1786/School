@@ -9,18 +9,24 @@
 
     <Spinner
         android:id="@+id/spClasses"
-        android:layout_width="409dp"
+        android:layout_width="200sp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="60dp"
+        android:backgroundTint="#5D09F2"
+        android:backgroundTintMode="add"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Spinner
         android:id="@+id/spStudents"
-        android:layout_width="409dp"
+        android:layout_width="200sp"
         android:layout_height="wrap_content"
+        android:backgroundTint="#E71808"
+        android:backgroundTintMode="add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spClasses"
         app:layout_constraintVertical_bias="0.255" />
 
