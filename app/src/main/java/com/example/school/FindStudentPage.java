@@ -1,10 +1,12 @@
 package com.example.school;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -17,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class FindStudentPage extends AppCompatActivity
 implements AdapterView.OnItemSelectedListener {
     Spinner spClasses, spStudents;
+    Button btnGoBack;
 
     String[] divisions = {"5", "19", "22", "10", "15", "30", "25"};
 
@@ -33,7 +36,13 @@ implements AdapterView.OnItemSelectedListener {
         });
 
         spClasses = findViewById(R.id.spClasses);
-        spStudents = findViewById(R.id.spStudents);
+        spStudents = findViewById(R.id.spEval);
+        btnGoBack = findViewById(R.id.btnGoBack);
+
+        btnGoBack.setOnClickListener(view -> {
+            Intent intent = new Intent(FindStudentPage.this, HomePage.class);
+            startActivity(intent);
+        });
 
         //Creating the ArrayAdapter instance having the country list
         ArrayAdapter classes = new ArrayAdapter(this,android.R.layout.simple_spinner_item, divisions);

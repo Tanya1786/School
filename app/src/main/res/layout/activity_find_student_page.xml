@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".FindStudentPage">
 
+    <Button
+        android:id="@+id/btnGoBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Go Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spEval" />
+
     <Spinner
         android:id="@+id/spClasses"
         android:layout_width="200sp"
@@ -19,7 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Spinner
-        android:id="@+id/spStudents"
+        android:id="@+id/spEval"
         android:layout_width="200sp"
         android:layout_height="wrap_content"
         android:backgroundTint="#E71808"
