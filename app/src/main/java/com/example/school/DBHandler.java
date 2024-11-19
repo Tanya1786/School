@@ -7,10 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+
 public class DBHandler extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "schoolDB";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 4;
 
     private static final String TABLE_TEACHER = "Teacher";
     private static final String TABLE_CLASS = "Class";
@@ -260,58 +261,59 @@ public class DBHandler extends SQLiteOpenHelper {
             if (studentResult == -1) Log.e("DBHandler", "Failed to insert student data");
         }
 
-        Object[][] schedules = {
-                {1, "Monday", 1, 1},
-                {1, "Monday", 2, 2},
-                {1, "Monday", 3, 3},
-                {1, "Monday", 4, 4},
-                {1, "Monday", 5, 5},
-                {1, "Monday", 6, 6},
-                {1, "Tuesday", 2, 1},
-                {1, "Tuesday", 2, 2},
-                {1, "Tuesday", 1, 3},
-                {1, "Tuesday", 4, 4},
-                {1, "Tuesday", 6, 5},
-                {1, "Tuesday", 7, 6},
-                {1, "Wednesday", 1, 1},
-                {1, "Wednesday", 1, 2},
-                {1, "Wednesday", 3, 3},
-                {1, "Wednesday", 4, 4},
-                {1, "Wednesday", 7, 5},
-                {1, "Wednesday", 7, 6},
-                {1, "Thursday", 4, 1},
-                {1, "Thursday", 4, 2},
-                {1, "Thursday", 3, 3},
-                {1, "Thursday", 5, 4},
-                {1, "Thursday", 6, 5},
-                {1, "Thursday", 6, 6},
-                {1, "Friday", 1, 1},
-                {1, "Friday", 2, 2},
-                {1, "Friday", 3, 3},
-                {1, "Friday", 4, 4},
-                {1, "Friday", 5, 5},
-                {1, "Friday", 6, 6}
+        String[][] schedules = {
+                {"1", "Monday", "1", "1"},
+                {"1", "Monday", "2", "2"},
+                {"1", "Monday", "3", "3"},
+                {"1", "Monday", "4", "4"},
+                {"1", "Monday", "5", "5"},
+                {"1", "Monday", "6", "6"},
+                {"1", "Tuesday", "2", "1"},
+                {"1", "Tuesday", "2", "2"},
+                {"1", "Tuesday", "1", "3"},
+                {"1", "Tuesday", "4", "4"},
+                {"1", "Tuesday", "6", "5"},
+                {"1", "Tuesday", "7", "6"},
+                {"1", "Wednesday", "1", "1"},
+                {"1", "Wednesday", "1", "2"},
+                {"1", "Wednesday", "3", "3"},
+                {"1", "Wednesday", "4", "4"},
+                {"1", "Wednesday", "7", "5"},
+                {"1", "Wednesday", "7", "6"},
+                {"1", "Thursday", "4", "1"},
+                {"1", "Thursday", "4", "2"},
+                {"1", "Thursday", "3", "3"},
+                {"1", "Thursday", "5", "4"},
+                {"1", "Thursday", "6", "5"},
+                {"1", "Thursday", "6", "6"},
+                {"1", "Friday", "1", "1"},
+                {"1", "Friday", "2", "2"},
+                {"1", "Friday", "3", "3"},
+                {"1", "Friday", "4", "4"},
+                {"1", "Friday", "5", "5"},
+                {"1", "Friday", "6", "6"}
         };
-        for (Object[] schedule : schedules) {
+
+        for (String[] schedule : schedules) {
             ContentValues scheduleValues = new ContentValues();
-            scheduleValues.put(SCHEDULE_TEACHER_ID, (int) schedule[0]);
-            scheduleValues.put(DAY_OF_WEEK, (String) schedule[1]);
-            scheduleValues.put(SCHEDULE_CLASS_ID, (int) schedule[2]);
-            scheduleValues.put(SLOT_IN_DAY, (int) schedule[3]);
+            scheduleValues.put(SCHEDULE_TEACHER_ID, schedule[0]);
+            scheduleValues.put(DAY_OF_WEEK, schedule[1]);
+            scheduleValues.put(SCHEDULE_CLASS_ID, schedule[2]);
+            scheduleValues.put(SLOT_IN_DAY, schedule[3]);
             long scheduleResult = db.insert(TABLE_SCHEDULE, null, scheduleValues);
             if (scheduleResult == -1) Log.e("DBHandler", "Failed to insert schedule data");
         }
 
 
-        Object[][] evaluations = {
-                {1, "Assignment", 10.00},
-                {1, "Quiz", 15.00}
+        String[][] evaluations = {
+                {"1", "Assignment", "10.00"},
+                {"1", "Quiz", "15.00"}
         };
-        for (Object[] evaluation : evaluations) {
+        for (String[] evaluation : evaluations) {
             ContentValues evaluationValues = new ContentValues();
-            evaluationValues.put(EVALUATION_CLASS_ID, (int) evaluation[0]);
-            evaluationValues.put(EVALUATION_TYPE, (String) evaluation[1]);
-            evaluationValues.put(EVALUATION_PERCENTAGE, (double) evaluation[2]);
+            evaluationValues.put(EVALUATION_CLASS_ID, evaluation[0]);
+            evaluationValues.put(EVALUATION_TYPE, evaluation[1]);
+            evaluationValues.put(EVALUATION_PERCENTAGE, evaluation[2]);
             long evaluationResult = db.insert(TABLE_EVALUATION, null, evaluationValues);
             if (evaluationResult == -1) Log.e("DBHandler", "Failed to insert evaluation data");
         }

@@ -30,7 +30,6 @@ public class SchedulePage extends AppCompatActivity {
     private TextView noClassesText, dateText;
     private DBHandler dbHandler;
     private Calendar currentDate;
-
     private static final String SLOT_IN_DAY = "SlotInDay";
     private static final String CLASS_ID = "ClassID";
     private static final String DIVISION = "Division";
@@ -54,9 +53,7 @@ public class SchedulePage extends AppCompatActivity {
         dateText = findViewById(R.id.dateText);
         dbHandler = new DBHandler(this);
 
-        //today's  date
         currentDate = Calendar.getInstance();
-        //skip to Monday if today is Saturday or Sunday
         if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
             currentDate.add(Calendar.DATE, 2); // Skip to Monday
         } else if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
@@ -65,10 +62,8 @@ public class SchedulePage extends AppCompatActivity {
 
         updateDateDisplay();
         loadSchedule();
-
         btnPrevDay.setOnClickListener(v -> navigateDay(-1));
         btnNextDay.setOnClickListener(v -> navigateDay(1));
-
         scheduleListView.setOnItemClickListener((parent, view, position, id) -> {
             HashMap<String, String> item = (HashMap<String, String>) parent.getItemAtPosition(position);
             String classId = item.get("classId");
@@ -83,49 +78,39 @@ public class SchedulePage extends AppCompatActivity {
             startActivity(intent);
         });
     }
-
-    //navigate to the previous or next day
     private void navigateDay(int days) {
         currentDate.add(Calendar.DATE, days);
-
-        //Skip weekends
-        if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-            currentDate.add(Calendar.DATE, 2);
-        } else if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            currentDate.add(Calendar.DATE, 1);
-        }
-        if (days < 0 && currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-            currentDate.add(Calendar.DATE, -3);
-        }
-
-        if (days > 0 && currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-            currentDate.add(Calendar.DATE, 3);
+        while (isWeekend(currentDate)) {
+            if (days > 0) {
+                currentDate.add(Calendar.DATE, (Calendar.MONDAY - currentDate.get(Calendar.DAY_OF_WEEK) + 7) % 7);
+            } else {
+                currentDate.add(Calendar.DATE, (Calendar.FRIDAY - currentDate.get(Calendar.DAY_OF_WEEK) + 7) % 7);
+            }
         }
         updateDateDisplay();
         loadSchedule();
     }
-
+    private boolean isWeekend(Calendar date) {
+        int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
+    }
     private void updateDateDisplay() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US);
         dateText.setText(dateFormat.format(currentDate.getTime()));
+        btnPrevDay.setEnabled(true);
+        btnNextDay.setEnabled(true);
     }
-
     private void loadSchedule() {
         SQLiteDatabase db = dbHandler.getReadableDatabase();
-
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
         String currentDay = dayFormat.format(currentDate.getTime());
-
         String query = "SELECT s." + SLOT_IN_DAY + ", s." + CLASS_ID + ", c." + DIVISION +
                 " FROM Schedule s " +
                 "JOIN Class c ON s.ClassID = c.ClassID " +
                 "WHERE s.DayOfWeek = ? " +
                 "ORDER BY s." + SLOT_IN_DAY;
-
         Cursor cursor = db.rawQuery(query, new String[]{currentDay});
-
         ArrayList<HashMap<String, String>> scheduleList = new ArrayList<>();
-
         if (cursor != null && cursor.moveToFirst()) {
             int slotIndex = cursor.getColumnIndex(SLOT_IN_DAY);
             int classIdIndex = cursor.getColumnIndex(CLASS_ID);
@@ -141,7 +126,6 @@ public class SchedulePage extends AppCompatActivity {
                 } while (cursor.moveToNext());
             }
         }
-
         if (!scheduleList.isEmpty()) {
             SimpleAdapter adapter = new SimpleAdapter(
                     this,
@@ -150,7 +134,6 @@ public class SchedulePage extends AppCompatActivity {
                     new String[]{"slot", "class"},
                     new int[]{R.id.timeSlotText, R.id.classText}
             );
-
             scheduleListView.setAdapter(adapter);
             scheduleListView.setVisibility(View.VISIBLE);
             noClassesText.setVisibility(View.GONE);
@@ -158,7 +141,6 @@ public class SchedulePage extends AppCompatActivity {
             scheduleListView.setVisibility(View.GONE);
             noClassesText.setVisibility(View.VISIBLE);
         }
-
         if (cursor != null) {
             cursor.close();
         }
