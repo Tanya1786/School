@@ -64,20 +64,25 @@ public class SchedulePage extends AppCompatActivity {
         loadSchedule();
         btnPrevDay.setOnClickListener(v -> navigateDay(-1));
         btnNextDay.setOnClickListener(v -> navigateDay(1));
+
         scheduleListView.setOnItemClickListener((parent, view, position, id) -> {
             HashMap<String, String> item = (HashMap<String, String>) parent.getItemAtPosition(position);
             String classId = item.get("classId");
+            String timeSlot = item.get("timeSlot");
             if (classId != null) {
                 Intent intent = new Intent(SchedulePage.this, ClassManagePage.class);
                 intent.putExtra("classId", classId);
+                intent.putExtra("timeSlot", timeSlot);
                 startActivity(intent);
             }
         });
+
         btnGoBack.setOnClickListener(view -> {
             Intent intent = new Intent(SchedulePage.this, HomePage.class);
             startActivity(intent);
         });
     }
+
     private void navigateDay(int days) {
         currentDate.add(Calendar.DATE, days);
         while (isWeekend(currentDate)) {
@@ -90,20 +95,25 @@ public class SchedulePage extends AppCompatActivity {
         updateDateDisplay();
         loadSchedule();
     }
+
     private boolean isWeekend(Calendar date) {
         int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
         return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
     }
+
     private void updateDateDisplay() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.US);
         dateText.setText(dateFormat.format(currentDate.getTime()));
         btnPrevDay.setEnabled(true);
         btnNextDay.setEnabled(true);
     }
+
     private void loadSchedule() {
         SQLiteDatabase db = dbHandler.getReadableDatabase();
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat dateFormatForTimeSlot = new SimpleDateFormat("yyyyMMdd", Locale.US);
         String currentDay = dayFormat.format(currentDate.getTime());
+        String dateForTimeSlot = dateFormatForTimeSlot.format(currentDate.getTime());
         String query = "SELECT s." + SLOT_IN_DAY + ", s." + CLASS_ID + ", c." + DIVISION +
                 " FROM Schedule s " +
                 "JOIN Class c ON s.ClassID = c.ClassID " +
@@ -115,13 +125,15 @@ public class SchedulePage extends AppCompatActivity {
             int slotIndex = cursor.getColumnIndex(SLOT_IN_DAY);
             int classIdIndex = cursor.getColumnIndex(CLASS_ID);
             int divisionIndex = cursor.getColumnIndex(DIVISION);
-
             if (slotIndex >= 0 && classIdIndex >= 0 && divisionIndex >= 0) {
                 do {
                     HashMap<String, String> schedule = new HashMap<>();
-                    schedule.put("slot", "Period " + cursor.getString(slotIndex));
+                    String slot = cursor.getString(slotIndex);
+                    String uniqueTimeSlot = dateForTimeSlot + "_Period" + slot;
+                    schedule.put("slot", "Period " + slot);
                     schedule.put("class", "Class " + cursor.getString(divisionIndex));
                     schedule.put("classId", cursor.getString(classIdIndex));
+                    schedule.put("timeSlot", uniqueTimeSlot);
                     scheduleList.add(schedule);
                 } while (cursor.moveToNext());
             }

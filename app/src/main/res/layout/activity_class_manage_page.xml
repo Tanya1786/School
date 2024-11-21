@@ -1,37 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ClassManagePage">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Back to Schedule" />
 
-    </LinearLayout>
-
-    <ScrollView
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnGoBack"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Go Back" />
+                android:layout_height="134dp"
+                android:background="@android:color/darker_gray"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Student"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:rotation="90"
+                    android:text="Attendance"
+                    android:textColor="@android:color/white"
+                    android:textIsSelectable="false"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:rotation="90"
+                    android:text="Good Behavior"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:rotation="90"
+                    android:text="No Homework"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:rotation="90"
+                    android:text="Late"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:rotation="90"
+                    android:text="Disruption"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/studentListView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="1dp" />
+
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Save Changes" />
+
+</LinearLayout>

@@ -11,23 +11,19 @@ import android.util.Log;
 public class DBHandler extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "schoolDB";
-    private static final int DB_VERSION = 4;
-
+    private static final int DB_VERSION = 6;
     private static final String TABLE_TEACHER = "Teacher";
     private static final String TABLE_CLASS = "Class";
     private static final String TABLE_STUDENT = "Student";
     private static final String TABLE_SCHEDULE = "Schedule";
     private static final String TABLE_EVALUATION = "Evaluation";
     private static final String TABLE_STUDENT_EVALUATION = "StudentEvaluation";
-
     private static final String TEACHER_ID = "TeacherID";
     private static final String TEACHER_USERNAME = "Username";
     private static final String TEACHER_PASSWORD = "Password";
     private static final String TEACHER_NAME = "Name";
-
     private static final String CLASS_ID = "ClassID";
     private static final String CLASS_DIVISION = "Division";
-
     private static final String STUDENT_ID = "StudentID";
     private static final String STUDENT_FIRST_NAME = "FirstName";
     private static final String STUDENT_LAST_NAME = "LastName";
@@ -38,22 +34,20 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String LATE_COUNT = "LateCount";
     private static final String DISRUPTIONS_COUNT = "DisruptionsCount";
     private static final String CALCULATED_GRADE = "CalculatedGrade";
-
     private static final String SCHEDULE_ID = "ScheduleID";
     private static final String SCHEDULE_TEACHER_ID = "TeacherID";
     private static final String DAY_OF_WEEK = "DayOfWeek";
     private static final String SCHEDULE_CLASS_ID = "ClassID";
     private static final String SLOT_IN_DAY = "SlotInDay";
-
     private static final String EVALUATION_ID = "EvaluationID";
     private static final String EVALUATION_CLASS_ID = "ClassID";
     private static final String EVALUATION_TYPE = "Type";
     private static final String EVALUATION_PERCENTAGE = "Percentage";
-
     private static final String STUDENT_EVALUATION_ID = "StudentEvaluationID";
     private static final String EVALUATION_STUDENT_ID = "StudentID";
     private static final String EVALUATION_ID_REF = "EvaluationID";
     private static final String GRADE = "Grade";
+    private static final String TIME_SLOT = "TimeSlot";
 
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -86,7 +80,6 @@ public class DBHandler extends SQLiteOpenHelper {
                 DAY_OF_WEEK + " TEXT NOT NULL, " +
                 SCHEDULE_CLASS_ID + " INTEGER, " +
                 SLOT_IN_DAY + " INTEGER)";
-
         String CREATE_EVALUATION_TABLE = "CREATE TABLE " + TABLE_EVALUATION + " (" +
                 EVALUATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 EVALUATION_CLASS_ID + " INTEGER, " +
@@ -97,6 +90,19 @@ public class DBHandler extends SQLiteOpenHelper {
                 EVALUATION_STUDENT_ID + " INTEGER, " +
                 EVALUATION_ID_REF + " INTEGER, " +
                 GRADE + " DECIMAL(5,2) NOT NULL)";
+        String CREATE_DAILY_RECORDS_TABLE = "CREATE TABLE DailyRecords (" +
+                "RecordID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "StudentID INTEGER NOT NULL, " +
+                "ClassID INTEGER NOT NULL, " +
+                "Date TEXT NOT NULL, " +
+                "TimeSlot TEXT DEFAULT 'Default', " +
+                "AttendanceMarked INTEGER DEFAULT 0, " +
+                "GoodBehaviorMarked INTEGER DEFAULT 0, " +
+                "NoHomeworkMarked INTEGER DEFAULT 0, " +
+                "LateMarked INTEGER DEFAULT 0, " +
+                "DisruptionMarked INTEGER DEFAULT 0, " +
+                "FOREIGN KEY(StudentID) REFERENCES Student(StudentID), " +
+                "FOREIGN KEY(ClassID) REFERENCES Class(ClassID))";
 
         db.execSQL(CREATE_TEACHER_TABLE);
         db.execSQL(CREATE_CLASS_TABLE);
@@ -104,19 +110,53 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_SCHEDULE_TABLE);
         db.execSQL(CREATE_EVALUATION_TABLE);
         db.execSQL(CREATE_STUDENT_EVALUATION_TABLE);
+        db.execSQL(CREATE_DAILY_RECORDS_TABLE);
+        db.execSQL("CREATE INDEX idx_daily_records_student ON DailyRecords(StudentID)");
+        db.execSQL("CREATE INDEX idx_daily_records_class ON DailyRecords(ClassID)");
+        db.execSQL("CREATE INDEX idx_daily_records_date ON DailyRecords(Date)");
+        db.execSQL("CREATE INDEX idx_daily_records_timeslot ON DailyRecords(TimeSlot)");
         insertInitialData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCHEDULE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVALUATION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENT_EVALUATION);
+        if (oldVersion < 6) {
+            try {
+                db.execSQL("CREATE TABLE DailyRecords_New (" +
+                        "RecordID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "StudentID INTEGER NOT NULL, " +
+                        "ClassID INTEGER NOT NULL, " +
+                        "Date TEXT NOT NULL, " +
+                        "TimeSlot TEXT DEFAULT 'Default', " +
+                        "AttendanceMarked INTEGER DEFAULT 0, " +
+                        "GoodBehaviorMarked INTEGER DEFAULT 0, " +
+                        "NoHomeworkMarked INTEGER DEFAULT 0, " +
+                        "LateMarked INTEGER DEFAULT 0, " +
+                        "DisruptionMarked INTEGER DEFAULT 0, " +
+                        "FOREIGN KEY(StudentID) REFERENCES Student(StudentID), " +
+                        "FOREIGN KEY(ClassID) REFERENCES Class(ClassID))");
 
-        onCreate(db);
+                db.execSQL("INSERT INTO DailyRecords_New (" +
+                        "StudentID, ClassID, Date, TimeSlot, " +
+                        "AttendanceMarked, GoodBehaviorMarked, " +
+                        "NoHomeworkMarked, LateMarked, DisruptionMarked) " +
+                        "SELECT StudentID, ClassID, Date, 'Default', " +
+                        "AttendanceMarked, GoodBehaviorMarked, " +
+                        "NoHomeworkMarked, LateMarked, DisruptionMarked " +
+                        "FROM DailyRecords");
+                db.execSQL("DROP TABLE DailyRecords");
+                db.execSQL("ALTER TABLE DailyRecords_New RENAME TO DailyRecords");
+                db.execSQL("CREATE INDEX idx_daily_records_student ON DailyRecords(StudentID)");
+                db.execSQL("CREATE INDEX idx_daily_records_class ON DailyRecords(ClassID)");
+                db.execSQL("CREATE INDEX idx_daily_records_date ON DailyRecords(Date)");
+                db.execSQL("CREATE INDEX idx_daily_records_timeslot ON DailyRecords(TimeSlot)");
+
+            } catch (Exception e) {
+                Log.e("DBHandler", "Error during database migration", e);
+                db.execSQL("DROP TABLE IF EXISTS DailyRecords");
+                onCreate(db);
+            }
+        }
     }
 
     public boolean checkTeacherCredentials(String username, String password) {
@@ -135,7 +175,6 @@ public class DBHandler extends SQLiteOpenHelper {
         teacherValues.put(TEACHER_NAME, "John Doe");
         long result = db.insert(TABLE_TEACHER, null, teacherValues);
         if (result == -1) Log.e("DBHandler", "Failed to insert teacher data");
-
         String[] divisions = {"5", "19", "22", "10", "15", "30", "25"};
         for (String division : divisions) {
             ContentValues classValues = new ContentValues();
@@ -303,7 +342,6 @@ public class DBHandler extends SQLiteOpenHelper {
             long scheduleResult = db.insert(TABLE_SCHEDULE, null, scheduleValues);
             if (scheduleResult == -1) Log.e("DBHandler", "Failed to insert schedule data");
         }
-
 
         String[][] evaluations = {
                 {"1", "Assignment", "10.00"},
