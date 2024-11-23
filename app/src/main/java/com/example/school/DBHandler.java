@@ -1,11 +1,14 @@
 package com.example.school;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 
 public class DBHandler extends SQLiteOpenHelper {
@@ -358,5 +361,21 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<String> getData() {
+        ArrayList<String> dataList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + CLASS_DIVISION + " FROM " + TABLE_CLASS, null);
 
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    @SuppressLint("Range") String data = "Class " + cursor.getString(cursor.getColumnIndex(CLASS_DIVISION));
+                    dataList.add(data);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        db.close();
+        return dataList;
+    }
 }
