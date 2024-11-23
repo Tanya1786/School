@@ -21,7 +21,7 @@ implements AdapterView.OnItemSelectedListener {
     Spinner spClasses, spStudents;
     Button btnGoBack;
 
-    String[] divisions = {"5", "19", "22", "10", "15", "30", "25"};
+    String[] divisions = {"Class 5", "Class 19", "Class 22", "Class 10", "Class 15", "Class 30", "Class 25"};
 
     @SuppressLint("MissingInflatedId")
     @Override
