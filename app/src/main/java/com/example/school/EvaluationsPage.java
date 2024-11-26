@@ -28,7 +28,7 @@ public class EvaluationsPage extends AppCompatActivity {
             return insets;
         });
 
-        spEval = findViewById(R.id.spEval);
+        spEval = findViewById(R.id.spStudents);
         btnGoBack = findViewById(R.id.btnGoBack);
 
         btnGoBack.setOnClickListener(view -> {
