@@ -3,6 +3,7 @@ package com.example.school;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -34,7 +35,7 @@ public class FindStudentPage extends AppCompatActivity {
         });
 
         spClasses = findViewById(R.id.spClasses);
-        spStudents = findViewById(R.id.spEval);
+        spStudents = findViewById(R.id.spStudents);
         btnGoBack = findViewById(R.id.btnGoBack);
         dbhandler = new DBHandler(this);
 
@@ -43,11 +44,18 @@ public class FindStudentPage extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Fetch the data from the database
+        // Fetch the classes from the database
         ArrayList<String> data = dbhandler.getData();
 
         ArrayAdapter<String> classes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data);
         classes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spClasses.setAdapter(classes);
+
+        // Fetch the data from the database
+        ArrayList<String> stuData = dbhandler.getStudentData();
+
+        ArrayAdapter<String> students = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, stuData);
+        students.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spStudents.setAdapter(students);
     }
 }

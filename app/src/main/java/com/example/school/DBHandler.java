@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -364,12 +365,39 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<String> getData() {
         ArrayList<String> dataList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + CLASS_DIVISION + " FROM " + TABLE_CLASS, null);
+        Cursor cursor = db.rawQuery("SELECT " + CLASS_DIVISION + ", " + CLASS_ID + " FROM " + TABLE_CLASS, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    @SuppressLint("Range") String data = "Class " + cursor.getString(cursor.getColumnIndex(CLASS_DIVISION));
+                    int classNum = cursor.getColumnIndex(CLASS_DIVISION);
+                    int classID = cursor.getColumnIndex(CLASS_ID);
+                    @SuppressLint("Range") String data = "Class " + cursor.getString(classNum) + " (ID: " + cursor.getString(classID) + ")";
+                    dataList.add(data);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            getStudentData();
+        }
+        db.close();
+        return dataList;
+    }
+
+    public ArrayList<String> getStudentData() {
+        ArrayList<String> dataList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(//must query the names before displaying
+                "SELECT " + STUDENT_FIRST_NAME + "," + STUDENT_LAST_NAME + "," + STUDENT_CLASS_ID + " FROM " + TABLE_STUDENT, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int index1 = cursor.getColumnIndex(STUDENT_FIRST_NAME),
+                            index2 = cursor.getColumnIndex(STUDENT_LAST_NAME),
+                            index3 = cursor.getColumnIndex(STUDENT_CLASS_ID);
+                    @SuppressLint("Range") String data =
+                        cursor.getString(index1) + " " +
+                        cursor.getString(index2) + " (ID: " +
+                        cursor.getString(index3) + ")";
                     dataList.add(data);
                 } while (cursor.moveToNext());
             }
