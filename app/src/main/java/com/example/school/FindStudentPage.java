@@ -3,7 +3,6 @@ package com.example.school;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 
 public class FindStudentPage extends AppCompatActivity {
     Spinner spClasses, spStudents;
-    Button btnGoBack;
+    Button btnGoBack, btnSubmit;
     private DBHandler dbhandler;
 
     @SuppressLint("MissingInflatedId")
@@ -37,6 +36,7 @@ public class FindStudentPage extends AppCompatActivity {
         spClasses = findViewById(R.id.spClasses);
         spStudents = findViewById(R.id.spStudents);
         btnGoBack = findViewById(R.id.btnGoBack);
+        btnSubmit = findViewById(R.id.btnSubmit);
         dbhandler = new DBHandler(this);
 
         btnGoBack.setOnClickListener(view -> {
@@ -57,5 +57,22 @@ public class FindStudentPage extends AppCompatActivity {
         ArrayAdapter<String> students = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, stuData);
         students.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spStudents.setAdapter(students);
+
+        btnSubmit.setOnClickListener(view -> {
+            String nameOfclass = spClasses.getSelectedItem().toString(),
+                    studName = spStudents.getSelectedItem().toString();
+
+            char c = nameOfclass.charAt(nameOfclass.length() - 2),
+            s = studName.charAt(studName.length() - 2);
+
+            if (c == s){
+                Intent intent = new Intent(FindStudentPage.this, StudentInfoPage.class);
+                intent.putExtra("class_key", nameOfclass);
+                intent.putExtra("name_key", studName);
+                startActivity(intent);
+            }else{
+                Toast.makeText(FindStudentPage.this, "This student does not exist in " + nameOfclass, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

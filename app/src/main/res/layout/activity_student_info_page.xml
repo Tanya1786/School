@@ -23,16 +23,19 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="230sp"
+                android:layout_margin="5sp"
                 android:layout_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:srcCompat="@drawable/student"
+                tools:srcCompat="@drawable/student" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="5sp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -46,8 +49,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Stud Name"
-                    tools:ignore="NestedWeights" />
+                    tools:ignore="NestedWeights"
+                    tools:text="Stud Name" />
 
                 <TextView
                     android:id="@+id/txtClass"

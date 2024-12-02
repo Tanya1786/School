@@ -365,7 +365,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<String> getData() {
         ArrayList<String> dataList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + CLASS_DIVISION + ", " + CLASS_ID + " FROM " + TABLE_CLASS, null);
+        Cursor cursor = db.rawQuery("SELECT " + " * " + " FROM " + TABLE_CLASS, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -387,7 +387,7 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<String> dataList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(//must query the names before displaying
-                "SELECT " + STUDENT_FIRST_NAME + "," + STUDENT_LAST_NAME + "," + STUDENT_CLASS_ID + " FROM " + TABLE_STUDENT, null);
+                "SELECT " + " * " + " FROM " + TABLE_STUDENT, null);
         if (cursor != null && cursor.getCount() > 0) {
             if (cursor.moveToFirst()) {
                 do {
