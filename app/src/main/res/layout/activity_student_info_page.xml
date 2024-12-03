@@ -15,7 +15,6 @@
         android:padding="10sp"
         tools:layout_editor_absoluteX="10dp"
         tools:layout_editor_absoluteY="10dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,24 +42,17 @@
                     android:id="@+id/txtName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="NestedWeights"
-                    tools:text="Stud Name" />
+                    android:text="Stud Name" />
 
                 <TextView
                     android:id="@+id/txtClass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="class"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:text="class" />
             </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -72,15 +64,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Email: "
+                android:text="Email:"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
 
@@ -93,7 +83,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Phone:"
                 android:textStyle="bold" />
 
@@ -101,7 +90,6 @@
                 android:id="@+id/txtPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
 
@@ -114,7 +102,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Attendance:"
                 android:textStyle="bold" />
 
@@ -122,7 +109,6 @@
                 android:id="@+id/txtAttend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
 
@@ -135,7 +121,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Good Word:"
                 android:textStyle="bold" />
 
@@ -143,7 +128,6 @@
                 android:id="@+id/txtGoodWord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
 
@@ -156,7 +140,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Disruptions:"
                 android:textStyle="bold" />
 
@@ -164,7 +147,6 @@
                 android:id="@+id/txtDisrupt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
 
@@ -177,7 +159,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="HW:"
                 android:textStyle="bold" />
 
@@ -185,7 +166,6 @@
                 android:id="@+id/txtHW"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
 
@@ -198,7 +178,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:text="Late:"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtLate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Info" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Grades:"
                 android:textStyle="bold" />
 
@@ -206,9 +204,14 @@
                 android:id="@+id/txtGrades"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:hint="Info" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnGoBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go Back" />
 
     </LinearLayout>
 

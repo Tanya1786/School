@@ -150,7 +150,6 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         return exists;
     }
-
     public void insertInitialData(SQLiteDatabase db) {
         ContentValues teacherValues = new ContentValues();
         teacherValues.put(TEACHER_USERNAME, "teacher1");
@@ -273,8 +272,6 @@ public class DBHandler extends SQLiteOpenHelper {
                 {"Daniel", "Clark", "7", "Daniel.Clark@example.com", "555-444-5555"},
                 {"Zoe", "Nelson", "7", "Zoe.Nelson@example.com", "555-555-6666"}
         };
-
-
         for (String[] student : students) {
             ContentValues studentValues = new ContentValues();
             studentValues.put(STUDENT_FIRST_NAME, student[0]);
@@ -285,7 +282,6 @@ public class DBHandler extends SQLiteOpenHelper {
             long studentResult = db.insert(TABLE_STUDENT, null, studentValues);
             if (studentResult == -1) Log.e("DBHandler", "Failed to insert student data");
         }
-
         String[][] schedules = {
                 {"1", "Monday", "1", "1"},
                 {"1", "Monday", "2", "2"},
@@ -331,18 +327,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
     }
-
-
     public long addEvaluation(int classId, String evalName, String evalType, double evalPercentage) {
         ContentValues values = new ContentValues();
         values.put(EVALUATION_CLASS_ID, classId);
         values.put(EVALUATION_NAME, evalName);
         values.put(EVALUATION_TYPE, evalType);
         values.put(EVALUATION_PERCENTAGE, evalPercentage);
-
         return getWritableDatabase().insert(TABLE_EVALUATION, null, values);
     }
-
     public void recordStudentGrade(int studentId, int evaluationId, double grade) {
         ContentValues values = new ContentValues();
         values.put(EVALUATION_STUDENT_ID, studentId);
@@ -351,7 +343,6 @@ public class DBHandler extends SQLiteOpenHelper {
 
         getWritableDatabase().insert(TABLE_STUDENT_EVALUATION, null, values);
     }
-
     public int updateEvaluation(String oldEvalName, int classId, String newEvalName, String evalType, double evalPercentage) {
         ContentValues values = new ContentValues();
         values.put(EVALUATION_CLASS_ID, classId);
@@ -366,7 +357,6 @@ public class DBHandler extends SQLiteOpenHelper {
                 new String[]{oldEvalName, String.valueOf(classId)}
         );
     }
-
     public void updateStudentGrades(int studentId, int evaluationId, double grade) {
         ContentValues values = new ContentValues();
         values.put(GRADE, grade);
@@ -384,7 +374,6 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(EVALUATION_NAME, name);
         values.put(EVALUATION_TYPE, type);
         values.put(EVALUATION_PERCENTAGE, percentage);
-
         return db.update(
                 TABLE_EVALUATION,
                 values,
@@ -399,7 +388,6 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(EVALUATION_STUDENT_ID, studentId);
         values.put(EVALUATION_ID_REF, evaluationId);
         values.put(GRADE, grade);
-
         int rowsAffected = db.update(
                 TABLE_STUDENT_EVALUATION,
                 values,

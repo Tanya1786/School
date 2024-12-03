@@ -62,7 +62,7 @@ public class AddEvalsPage extends AppCompatActivity {
         divisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) { // Ignore "Select Division"
+                if (position > 0) {
                     String selectedDivision = parent.getItemAtPosition(position).toString();
                     loadStudentsForDivision(selectedDivision);
                 }
@@ -72,7 +72,6 @@ public class AddEvalsPage extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
-
     private void setupButtons() {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +79,6 @@ public class AddEvalsPage extends AppCompatActivity {
                 saveEvaluation();
             }
         });
-
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +86,6 @@ public class AddEvalsPage extends AppCompatActivity {
             }
         });
     }
-
     private void populateDivisionSpinner() {
         List<String> divisions = new ArrayList<>();
         divisions.add("Select Division");
@@ -98,7 +95,6 @@ public class AddEvalsPage extends AppCompatActivity {
                 new String[]{DBHandler.CLASS_DIVISION},
                 null, null, null, null, null
         );
-
         while (cursor.moveToNext()) {
             divisions.add(cursor.getString(0));
         }
@@ -113,7 +109,6 @@ public class AddEvalsPage extends AppCompatActivity {
         divisionSpinner.setAdapter(adapter);
         divisionSpinner.setSelection(0, false);
     }
-
     private void populateEvalTypeSpinner() {
         String[] evalTypes = {
                 "Select Evaluation Type",
@@ -124,7 +119,6 @@ public class AddEvalsPage extends AppCompatActivity {
                 "Assignment",
                 "Behavior"
         };
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
@@ -177,14 +171,13 @@ public class AddEvalsPage extends AppCompatActivity {
         String query = "SELECT s." + DBHandler.STUDENT_ID +
                 ", s." + DBHandler.STUDENT_FIRST_NAME +
                 ", s." + DBHandler.STUDENT_LAST_NAME +
-                (isEditMode ? ", se." + DBHandler.GRADE : "") +
+                ", se." + DBHandler.GRADE +
                 " FROM " + DBHandler.TABLE_STUDENT + " s" +
-                (isEditMode ? " LEFT JOIN " + DBHandler.TABLE_STUDENT_EVALUATION + " se" +
-                        " ON s." + DBHandler.STUDENT_ID + " = se." + DBHandler.EVALUATION_STUDENT_ID +
-                        " AND se." + DBHandler.EVALUATION_ID_REF + " = " + evaluationId : "") +
-                " WHERE s." + DBHandler.STUDENT_CLASS_ID + " = (SELECT " + DBHandler.CLASS_ID +
-                " FROM " + DBHandler.TABLE_CLASS +
-                " WHERE " + DBHandler.CLASS_DIVISION + " = ?)";
+                " LEFT JOIN " + DBHandler.TABLE_CLASS + " c ON s." + DBHandler.STUDENT_CLASS_ID + " = c." + DBHandler.CLASS_ID +
+                " LEFT JOIN " + DBHandler.TABLE_STUDENT_EVALUATION + " se" +
+                " ON s." + DBHandler.STUDENT_ID + " = se." + DBHandler.EVALUATION_STUDENT_ID +
+                " AND se." + DBHandler.EVALUATION_ID_REF + " = " + evaluationId +
+                " WHERE c." + DBHandler.CLASS_DIVISION + " = ?";
 
         Cursor cursor = dbHandler.getReadableDatabase().rawQuery(query, new String[]{division});
         while (cursor.moveToNext()) {
@@ -192,12 +185,13 @@ public class AddEvalsPage extends AppCompatActivity {
             student.put("StudentID", cursor.getString(0));
             student.put("FirstName", cursor.getString(1));
             student.put("LastName", cursor.getString(2));
-            if (isEditMode && !cursor.isNull(3)) {
+            if (!cursor.isNull(3)) {
                 student.put("Grade", String.valueOf(cursor.getDouble(3)));
             }
             studentList.add(student);
         }
         cursor.close();
+
         adapter = new StudentEvaluationsAdapter(this, studentList,
                 new StudentEvaluationsAdapter.OnGradeChangedListener() {
                     @Override
@@ -208,7 +202,6 @@ public class AddEvalsPage extends AppCompatActivity {
         );
         studentsListView.setAdapter(adapter);
     }
-
     private void saveEvaluation() {
         if (divisionSpinner.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Please select a division", Toast.LENGTH_SHORT).show();
@@ -262,7 +255,6 @@ public class AddEvalsPage extends AppCompatActivity {
         }
         classCursor.close();
     }
-
     private void saveGradesForStudents(String evalName) {
         for (Map<String, String> student : studentList) {
             String grade = student.get("Grade");
