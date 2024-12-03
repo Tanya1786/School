@@ -1,45 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EvaluationsPage">
-
-    <Button
-        android:id="@+id/btnGoBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="Go Back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spStudents" />
-
-    <Spinner
-        android:id="@+id/spStudents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:backgroundTint="#06E60F"
-        android:backgroundTintMode="add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F0F4F8">
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="Evaluations"
+        android:text="Evaluations Management"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textStyle="bold"
+        android:textColor="#2C3E50"
+        android:textAlignment="center"
+        android:layout_marginBottom="24dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Division"
+        android:textColor="#34495E"
+        android:layout_marginTop="8dp"/>
+
+    <Spinner
+        android:id="@+id/divisionSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Existing Evaluations"
+        android:textColor="#34495E"
+        android:layout_marginTop="8dp"/>
+
+    <Spinner
+        android:id="@+id/evaluationSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/addNewEvalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add a New Evaluation"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#3498DB"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/editExistingEvalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit Existing Evaluation"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#2ECC71"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back to Home"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#E74C3C"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>

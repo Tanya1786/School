@@ -1,100 +1,106 @@
 package com.example.school;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 
 public class DBHandler extends SQLiteOpenHelper {
-
     private static final String DB_NAME = "schoolDB";
-    private static final int DB_VERSION = 6;
-    private static final String TABLE_TEACHER = "Teacher";
-    private static final String TABLE_CLASS = "Class";
-    private static final String TABLE_STUDENT = "Student";
-    private static final String TABLE_SCHEDULE = "Schedule";
-    private static final String TABLE_EVALUATION = "Evaluation";
-    private static final String TABLE_STUDENT_EVALUATION = "StudentEvaluation";
-    private static final String TEACHER_ID = "TeacherID";
-    private static final String TEACHER_USERNAME = "Username";
-    private static final String TEACHER_PASSWORD = "Password";
-    private static final String TEACHER_NAME = "Name";
-    private static final String CLASS_ID = "ClassID";
-    private static final String CLASS_DIVISION = "Division";
-    private static final String STUDENT_ID = "StudentID";
-    private static final String STUDENT_FIRST_NAME = "FirstName";
-    private static final String STUDENT_LAST_NAME = "LastName";
-    private static final String STUDENT_CLASS_ID = "ClassID";
-    private static final String ATTENDANCE_COUNT = "AttendanceCount";
-    private static final String GOOD_BEHAVIOR_COUNT = "GoodBehaviorCount";
-    private static final String NO_HOMEWORK_COUNT = "NoHomeworkCount";
-    private static final String LATE_COUNT = "LateCount";
-    private static final String DISRUPTIONS_COUNT = "DisruptionsCount";
-    private static final String CALCULATED_GRADE = "CalculatedGrade";
-    private static final String SCHEDULE_ID = "ScheduleID";
-    private static final String SCHEDULE_TEACHER_ID = "TeacherID";
-    private static final String DAY_OF_WEEK = "DayOfWeek";
-    private static final String SCHEDULE_CLASS_ID = "ClassID";
-    private static final String SLOT_IN_DAY = "SlotInDay";
-    private static final String EVALUATION_ID = "EvaluationID";
-    private static final String EVALUATION_CLASS_ID = "ClassID";
-    private static final String EVALUATION_TYPE = "Type";
-    private static final String EVALUATION_PERCENTAGE = "Percentage";
-    private static final String STUDENT_EVALUATION_ID = "StudentEvaluationID";
-    private static final String EVALUATION_STUDENT_ID = "StudentID";
-    private static final String EVALUATION_ID_REF = "EvaluationID";
-    private static final String GRADE = "Grade";
-    private static final String TIME_SLOT = "TimeSlot";
+    private static final int DB_VERSION = 10;
+    public static final String TABLE_TEACHER = "Teacher";
+    public static final String TABLE_CLASS = "Class";
+    public static final String TABLE_STUDENT = "Student";
+    public static final String TABLE_SCHEDULE = "Schedule";
+    public static final String TABLE_EVALUATION = "Evaluation";
+    public static final String TABLE_STUDENT_EVALUATION = "StudentEvaluation";
+    public static final String CLASS_ID = "ClassID";
+    public static final String CLASS_DIVISION = "Division";
+    public static final String TEACHER_ID = "TeacherID";
+    public static final String TEACHER_USERNAME = "Username";
+    public static final String TEACHER_PASSWORD = "Password";
+    public static final String TEACHER_NAME = "Name";
+    public static final String STUDENT_ID = "StudentID";
+    public static final String STUDENT_FIRST_NAME = "FirstName";
+    public static final String STUDENT_LAST_NAME = "LastName";
+    public static final String STUDENT_CLASS_ID = "ClassID";
+    public static final String STUDENT_EMAIL = "Email";
+    public static final String STUDENT_PHONE = "Phone";
+    public static final String ATTENDANCE_COUNT = "AttendanceCount";
+    public static final String GOOD_BEHAVIOR_COUNT = "GoodBehaviorCount";
+    public static final String NO_HOMEWORK_COUNT = "NoHomeworkCount";
+    public static final String LATE_COUNT = "LateCount";
+    public static final String DISRUPTIONS_COUNT = "DisruptionsCount";
+    public static final String CALCULATED_GRADE = "CalculatedGrade";
+    public static final String SCHEDULE_ID = "ScheduleID";
+    public static final String SCHEDULE_TEACHER_ID = "TeacherID";
+    public static final String SCHEDULE_CLASS_ID = "ClassID";
+    public static final String DAY_OF_WEEK = "DayOfWeek";
+    public static final String SLOT_IN_DAY = "SlotInDay";
+    public static final String TIME_SLOT = "TimeSlot";
+    public static final String EVALUATION_ID = "EvaluationID";
+    public static final String EVALUATION_CLASS_ID = "ClassID";
+    public static final String EVALUATION_TYPE = "Type";
+    public static final String EVALUATION_PERCENTAGE = "Percentage";
+    public static final String EVALUATION_NAME = "EvaluationName";
+    public static final String STUDENT_EVALUATION_ID = "StudentEvaluationID";
+    public static final String EVALUATION_STUDENT_ID = "StudentID";
+    public static final String EVALUATION_ID_REF = "EvaluationID";
+    public static final String GRADE = "Grade";
 
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TEACHER_TABLE = "CREATE TABLE " + TABLE_TEACHER + " (" +
+        String createTeacherTable = "CREATE TABLE IF NOT EXISTS " + TABLE_TEACHER + " (" +
                 TEACHER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TEACHER_USERNAME + " TEXT NOT NULL UNIQUE, " +
                 TEACHER_PASSWORD + " TEXT NOT NULL, " +
                 TEACHER_NAME + " TEXT NOT NULL)";
-        String CREATE_CLASS_TABLE = "CREATE TABLE " + TABLE_CLASS + " (" +
+        String createClassTable = "CREATE TABLE IF NOT EXISTS " + TABLE_CLASS + " (" +
                 CLASS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 CLASS_DIVISION + " TEXT NOT NULL)";
-        String CREATE_STUDENT_TABLE = "CREATE TABLE " + TABLE_STUDENT + " (" +
+        String createStudentTable = "CREATE TABLE IF NOT EXISTS " + TABLE_STUDENT + " (" +
                 STUDENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 STUDENT_FIRST_NAME + " TEXT NOT NULL, " +
                 STUDENT_LAST_NAME + " TEXT NOT NULL, " +
                 STUDENT_CLASS_ID + " INTEGER, " +
+                STUDENT_EMAIL + " TEXT NOT NULL, " +
+                STUDENT_PHONE + " TEXT NOT NULL, " +
                 ATTENDANCE_COUNT + " INTEGER DEFAULT 0, " +
                 GOOD_BEHAVIOR_COUNT + " INTEGER DEFAULT 0, " +
                 NO_HOMEWORK_COUNT + " INTEGER DEFAULT 0, " +
                 LATE_COUNT + " INTEGER DEFAULT 0, " +
                 DISRUPTIONS_COUNT + " INTEGER DEFAULT 0, " +
-                CALCULATED_GRADE + " DECIMAL(5,2) DEFAULT 0.00)";
-        String CREATE_SCHEDULE_TABLE = "CREATE TABLE " + TABLE_SCHEDULE + " (" +
+                CALCULATED_GRADE + " DECIMAL(5,2) DEFAULT 0.00, " +
+                "FOREIGN KEY(" + STUDENT_CLASS_ID + ") REFERENCES " + TABLE_CLASS + "(" + CLASS_ID + "))";
+        String createScheduleTable = "CREATE TABLE IF NOT EXISTS " + TABLE_SCHEDULE + " (" +
                 SCHEDULE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 SCHEDULE_TEACHER_ID + " INTEGER, " +
                 DAY_OF_WEEK + " TEXT NOT NULL, " +
                 SCHEDULE_CLASS_ID + " INTEGER, " +
-                SLOT_IN_DAY + " INTEGER)";
-        String CREATE_EVALUATION_TABLE = "CREATE TABLE " + TABLE_EVALUATION + " (" +
+                SLOT_IN_DAY + " INTEGER, " +
+                "FOREIGN KEY(" + SCHEDULE_TEACHER_ID + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_ID + "), " +
+                "FOREIGN KEY(" + SCHEDULE_CLASS_ID + ") REFERENCES " + TABLE_CLASS + "(" + CLASS_ID + "))";
+        String createEvaluationTable = "CREATE TABLE " + TABLE_EVALUATION + " (" +
                 EVALUATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 EVALUATION_CLASS_ID + " INTEGER, " +
-                EVALUATION_TYPE + " TEXT CHECK (Type IN ('Assignment', 'Lab', 'Quiz', 'Midterm', 'Final exam', 'Homework', 'Behavior')), " +
-                EVALUATION_PERCENTAGE + " DECIMAL(5,2) NOT NULL)";
-        String CREATE_STUDENT_EVALUATION_TABLE = "CREATE TABLE " + TABLE_STUDENT_EVALUATION + " (" +
+                EVALUATION_NAME + " TEXT NOT NULL UNIQUE, " +
+                EVALUATION_TYPE + " TEXT CHECK (" + EVALUATION_TYPE + " IN ('Assignment', 'Lab', 'Quiz', 'Midterm', 'Final exam', 'Homework', 'Behavior')), " +
+                EVALUATION_PERCENTAGE + " DECIMAL(5,2) NOT NULL, " +
+                "FOREIGN KEY(" + EVALUATION_CLASS_ID + ") REFERENCES " + TABLE_CLASS + "(" + CLASS_ID + "))";
+        String createStudentEvaluationTable = "CREATE TABLE IF NOT EXISTS " + TABLE_STUDENT_EVALUATION + " (" +
                 STUDENT_EVALUATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 EVALUATION_STUDENT_ID + " INTEGER, " +
                 EVALUATION_ID_REF + " INTEGER, " +
-                GRADE + " DECIMAL(5,2) NOT NULL)";
-        String CREATE_DAILY_RECORDS_TABLE = "CREATE TABLE DailyRecords (" +
+                GRADE + " DECIMAL(5,2) NOT NULL, " +
+                "FOREIGN KEY(" + EVALUATION_STUDENT_ID + ") REFERENCES " + TABLE_STUDENT + "(" + STUDENT_ID + "), " +
+                "FOREIGN KEY(" + EVALUATION_ID_REF + ") REFERENCES " + TABLE_EVALUATION + "(" + EVALUATION_ID + "))";
+        String createDailyRecordsTable = "CREATE TABLE IF NOT EXISTS DailyRecords (" +
                 "RecordID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "StudentID INTEGER NOT NULL, " +
                 "ClassID INTEGER NOT NULL, " +
@@ -105,64 +111,37 @@ public class DBHandler extends SQLiteOpenHelper {
                 "NoHomeworkMarked INTEGER DEFAULT 0, " +
                 "LateMarked INTEGER DEFAULT 0, " +
                 "DisruptionMarked INTEGER DEFAULT 0, " +
-                "FOREIGN KEY(StudentID) REFERENCES Student(StudentID), " +
-                "FOREIGN KEY(ClassID) REFERENCES Class(ClassID))";
-
-        db.execSQL(CREATE_TEACHER_TABLE);
-        db.execSQL(CREATE_CLASS_TABLE);
-        db.execSQL(CREATE_STUDENT_TABLE);
-        db.execSQL(CREATE_SCHEDULE_TABLE);
-        db.execSQL(CREATE_EVALUATION_TABLE);
-        db.execSQL(CREATE_STUDENT_EVALUATION_TABLE);
-        db.execSQL(CREATE_DAILY_RECORDS_TABLE);
-        db.execSQL("CREATE INDEX idx_daily_records_student ON DailyRecords(StudentID)");
-        db.execSQL("CREATE INDEX idx_daily_records_class ON DailyRecords(ClassID)");
-        db.execSQL("CREATE INDEX idx_daily_records_date ON DailyRecords(Date)");
-        db.execSQL("CREATE INDEX idx_daily_records_timeslot ON DailyRecords(TimeSlot)");
+                "FOREIGN KEY(StudentID) REFERENCES " + TABLE_STUDENT + "(StudentID), " +
+                "FOREIGN KEY(ClassID) REFERENCES " + TABLE_CLASS + "(ClassID))";
+        db.execSQL(createTeacherTable);
+        db.execSQL(createClassTable);
+        db.execSQL(createStudentTable);
+        db.execSQL(createScheduleTable);
+        db.execSQL(createEvaluationTable);
+        db.execSQL(createStudentEvaluationTable);
+        db.execSQL(createDailyRecordsTable);
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_daily_records_student ON DailyRecords(StudentID)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_daily_records_class ON DailyRecords(ClassID)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_daily_records_date ON DailyRecords(Date)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_daily_records_timeslot ON DailyRecords(TimeSlot)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_evaluation_class ON " + TABLE_EVALUATION + "(" + EVALUATION_CLASS_ID + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_student_evaluation_student ON " + TABLE_STUDENT_EVALUATION + "(" + EVALUATION_STUDENT_ID + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_student_evaluation_evaluation ON " + TABLE_STUDENT_EVALUATION + "(" + EVALUATION_ID_REF + ")");
         insertInitialData(db);
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 6) {
-            try {
-                db.execSQL("CREATE TABLE DailyRecords_New (" +
-                        "RecordID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "StudentID INTEGER NOT NULL, " +
-                        "ClassID INTEGER NOT NULL, " +
-                        "Date TEXT NOT NULL, " +
-                        "TimeSlot TEXT DEFAULT 'Default', " +
-                        "AttendanceMarked INTEGER DEFAULT 0, " +
-                        "GoodBehaviorMarked INTEGER DEFAULT 0, " +
-                        "NoHomeworkMarked INTEGER DEFAULT 0, " +
-                        "LateMarked INTEGER DEFAULT 0, " +
-                        "DisruptionMarked INTEGER DEFAULT 0, " +
-                        "FOREIGN KEY(StudentID) REFERENCES Student(StudentID), " +
-                        "FOREIGN KEY(ClassID) REFERENCES Class(ClassID))");
-
-                db.execSQL("INSERT INTO DailyRecords_New (" +
-                        "StudentID, ClassID, Date, TimeSlot, " +
-                        "AttendanceMarked, GoodBehaviorMarked, " +
-                        "NoHomeworkMarked, LateMarked, DisruptionMarked) " +
-                        "SELECT StudentID, ClassID, Date, 'Default', " +
-                        "AttendanceMarked, GoodBehaviorMarked, " +
-                        "NoHomeworkMarked, LateMarked, DisruptionMarked " +
-                        "FROM DailyRecords");
-                db.execSQL("DROP TABLE DailyRecords");
-                db.execSQL("ALTER TABLE DailyRecords_New RENAME TO DailyRecords");
-                db.execSQL("CREATE INDEX idx_daily_records_student ON DailyRecords(StudentID)");
-                db.execSQL("CREATE INDEX idx_daily_records_class ON DailyRecords(ClassID)");
-                db.execSQL("CREATE INDEX idx_daily_records_date ON DailyRecords(Date)");
-                db.execSQL("CREATE INDEX idx_daily_records_timeslot ON DailyRecords(TimeSlot)");
-
-            } catch (Exception e) {
-                Log.e("DBHandler", "Error during database migration", e);
-                db.execSQL("DROP TABLE IF EXISTS DailyRecords");
-                onCreate(db);
-            }
-        }
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCHEDULE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVALUATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENT_EVALUATION);
+        db.execSQL("DROP TABLE IF EXISTS DailyRecords");
+        onCreate(db);
     }
-
     public boolean checkTeacherCredentials(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_TEACHER + " WHERE " + TEACHER_USERNAME + " = ? AND " + TEACHER_PASSWORD + " = ?";
@@ -188,118 +167,121 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         String[][] students = {
-                {"Alice", "Johnson", "1"},
-                {"Bob", "Smith", "1"},
-                {"Cameron", "White", "1"},
-                {"Diana", "Hall", "1"},
-                {"Ethan", "Young", "1"},
-                {"Fiona", "Green", "1"},
-                {"George", "King", "1"},
-                {"Hannah", "Carter", "1"},
-                {"Ian", "Baker", "1"},
-                {"Jasmine", "Clark", "1"},
-                {"Kyle", "Adams", "1"},
-                {"Lara", "Thompson", "1"},
-                {"Mason", "Scott", "1"},
-                {"Natalie", "Nelson", "1"},
-                {"Oscar", "Ward", "1"},
-                {"Charlie", "Davis", "2"},
-                {"David", "Evans", "2"},
-                {"John", "Doe", "2"},
-                {"Jane", "Smith", "2"},
-                {"Max", "Brown", "2"},
-                {"Lucy", "Johnson", "2"},
-                {"Oliver", "Taylor", "2"},
-                {"Sophia", "Anderson", "2"},
-                {"Jackson", "Lee", "2"},
-                {"Mia", "Moore", "2"},
-                {"Isabella", "Harris", "2"},
-                {"Liam", "Clark", "2"},
-                {"Emma", "Lewis", "2"},
-                {"Noah", "King", "2"},
-                {"Ava", "Young", "2"},
-                {"Eve", "Brown", "3"},
-                {"Frank", "Wilson", "3"},
-                {"Henry", "Moore", "3"},
-                {"Ella", "White", "3"},
-                {"Lucas", "Hall", "3"},
-                {"Zoe", "King", "3"},
-                {"Mason", "Green", "3"},
-                {"Carter", "Scott", "3"},
-                {"Grace", "Clark", "3"},
-                {"Chloe", "Adams", "3"},
-                {"Ella", "Baker", "3"},
-                {"James", "Jackson", "3"},
-                {"Scarlett", "Thompson", "3"},
-                {"Aria", "Nelson", "3"},
-                {"Michael", "Ward", "3"},
-                {"Grace", "Taylor", "4"},
-                {"Henry", "Moore", "4"},
-                {"Ella", "White", "4"},
-                {"Liam", "Brown", "4"},
-                {"Emily", "Davis", "4"},
-                {"Matthew", "Johnson", "4"},
-                {"Amelia", "Garcia", "4"},
-                {"Benjamin", "Martinez", "4"},
-                {"Charlotte", "Hernandez", "4"},
-                {"Oliver", "Lopez", "4"},
-                {"Sophia", "Gonzalez", "4"},
-                {"Lucas", "Wilson", "4"},
-                {"Isabella", "Anderson", "4"},
-                {"Jack", "Thomas", "4"},
-                {"Aiden", "Robinson", "4"},
-                {"Isabella", "Anderson", "5"},
-                {"Jack", "Thomas", "5"},
-                {"Ava", "Taylor", "5"},
-                {"Ethan", "Jones", "5"},
-                {"Sophia", "Brown", "5"},
-                {"Liam", "Williams", "5"},
-                {"Mia", "Davis", "5"},
-                {"Zoe", "Garcia", "5"},
-                {"Max", "Martinez", "5"},
-                {"Emily", "Rodriguez", "5"},
-                {"Jacob", "Wilson", "5"},
-                {"Charlotte", "Lopez", "5"},
-                {"Amelia", "Gonzalez", "5"},
-                {"William", "Hernandez", "5"},
-                {"Elijah", "Lee", "5"},
-                {"Kathy", "Martin", "6"},
-                {"Leo", "Jackson", "6"},
-                {"Sofia", "Thompson", "6"},
-                {"Daniel", "Clark", "6"},
-                {"Olivia", "King", "6"},
-                {"Alexander", "Scott", "6"},
-                {"Avery", "Young", "6"},
-                {"Grace", "Harris", "6"},
-                {"Harper", "Lewis", "6"},
-                {"Scarlett", "Robinson", "6"},
-                {"Aria", "Walker", "6"},
-                {"Layla", "Hall", "6"},
-                {"Gavin", "Allen", "6"},
-                {"Chloe", "Ward", "6"},
-                {"Aiden", "Jackson", "6"},
-                {"Mia", "Harris", "7"},
-                {"Noah", "Lewis", "7"},
-                {"Olivia", "Walker", "7"},
-                {"Aiden", "Adams", "7"},
-                {"Layla", "Baker", "7"},
-                {"Ella", "Hernandez", "7"},
-                {"Sophia", "Thompson", "7"},
-                {"James", "Jackson", "7"},
-                {"Lucas", "Green", "7"},
-                {"Abigail", "Carter", "7"},
-                {"Grace", "Scott", "7"},
-                {"Benjamin", "Hall", "7"},
-                {"Isabella", "Young", "7"},
-                {"Daniel", "Clark", "7"},
-                {"Zoe", "Nelson", "7"}
+                {"Alice", "Johnson", "1", "Alice.Johnson@example.com", "555-111-1111"},
+                {"Bob", "Smith", "1", "Bob.Smith@example.com", "555-222-2222"},
+                {"Cameron", "White", "1", "Cameron.White@example.com", "555-333-3333"},
+                {"Diana", "Hall", "1", "Diana.Hall@example.com", "555-444-4444"},
+                {"Ethan", "Young", "1", "Ethan.Young@example.com", "555-555-5555"},
+                {"Fiona", "Green", "1", "Fiona.Green@example.com", "555-666-6666"},
+                {"George", "King", "1", "George.King@example.com", "555-777-7777"},
+                {"Hannah", "Carter", "1", "Hannah.Carter@example.com", "555-888-8888"},
+                {"Ian", "Baker", "1", "Ian.Baker@example.com", "555-999-9999"},
+                {"Jasmine", "Clark", "1", "Jasmine.Clark@example.com", "555-000-0000"},
+                {"Kyle", "Adams", "1", "Kyle.Adams@example.com", "555-111-2222"},
+                {"Lara", "Thompson", "1", "Lara.Thompson@example.com", "555-222-3333"},
+                {"Mason", "Scott", "1", "Mason.Scott@example.com", "555-333-4444"},
+                {"Natalie", "Nelson", "1", "Natalie.Nelson@example.com", "555-444-5555"},
+                {"Oscar", "Ward", "1", "Oscar.Ward@example.com", "555-555-6666"},
+                {"Charlie", "Davis", "2", "Charlie.Davis@example.com", "555-666-7777"},
+                {"David", "Evans", "2", "David.Evans@example.com", "555-777-8888"},
+                {"John", "Doe", "2", "John.Doe@example.com", "555-888-9999"},
+                {"Jane", "Smith", "2", "Jane.Smith@example.com", "555-999-0000"},
+                {"Max", "Brown", "2", "Max.Brown@example.com", "555-000-1111"},
+                {"Lucy", "Johnson", "2", "Lucy.Johnson@example.com", "555-111-2222"},
+                {"Oliver", "Taylor", "2", "Oliver.Taylor@example.com", "555-222-3333"},
+                {"Sophia", "Anderson", "2", "Sophia.Anderson@example.com", "555-333-4444"},
+                {"Jackson", "Lee", "2", "Jackson.Lee@example.com", "555-444-5555"},
+                {"Mia", "Moore", "2", "Mia.Moore@example.com", "555-555-6666"},
+                {"Isabella", "Harris", "2", "Isabella.Harris@example.com", "555-666-7777"},
+                {"Liam", "Clark", "2", "Liam.Clark@example.com", "555-777-8888"},
+                {"Emma", "Lewis", "2", "Emma.Lewis@example.com", "555-888-9999"},
+                {"Noah", "King", "2", "Noah.King@example.com", "555-999-0000"},
+                {"Ava", "Young", "2", "Ava.Young@example.com", "555-000-1111"},
+                {"Eve", "Brown", "3", "Eve.Brown@example.com", "555-111-2222"},
+                {"Frank", "Wilson", "3", "Frank.Wilson@example.com", "555-222-3333"},
+                {"Henry", "Moore", "3", "Henry.Moore@example.com", "555-333-4444"},
+                {"Ella", "White", "3", "Ella.White@example.com", "555-444-5555"},
+                {"Lucas", "Hall", "3", "Lucas.Hall@example.com", "555-555-6666"},
+                {"Zoe", "King", "3", "Zoe.King@example.com", "555-666-7777"},
+                {"Mason", "Green", "3", "Mason.Green@example.com", "555-777-8888"},
+                {"Carter", "Scott", "3", "Carter.Scott@example.com", "555-888-9999"},
+                {"Grace", "Clark", "3", "Grace.Clark@example.com", "555-999-0000"},
+                {"Chloe", "Adams", "3", "Chloe.Adams@example.com", "555-000-1111"},
+                {"Ella", "Baker", "3", "Ella.Baker@example.com", "555-111-2222"},
+                {"James", "Jackson", "3", "James.Jackson@example.com", "555-222-3333"},
+                {"Scarlett", "Thompson", "3", "Scarlett.Thompson@example.com", "555-333-4444"},
+                {"Aria", "Nelson", "3", "Aria.Nelson@example.com", "555-444-5555"},
+                {"Michael", "Ward", "3", "Michael.Ward@example.com", "555-555-6666"},
+                {"Grace", "Taylor", "4", "Grace.Taylor@example.com", "555-666-7777"},
+                {"Henry", "Moore", "4", "Henry.Moore@example.com", "555-777-8888"},
+                {"Ella", "White", "4", "Ella.White@example.com", "555-888-9999"},
+                {"Liam", "Brown", "4", "Liam.Brown@example.com", "555-999-0000"},
+                {"Emily", "Davis", "4", "Emily.Davis@example.com", "555-000-1111"},
+                {"Matthew", "Johnson", "4", "Matthew.Johnson@example.com", "555-111-2222"},
+                {"Amelia", "Garcia", "4", "Amelia.Garcia@example.com", "555-222-3333"},
+                {"Benjamin", "Martinez", "4", "Benjamin.Martinez@example.com", "555-333-4444"},
+                {"Charlotte", "Hernandez", "4", "Charlotte.Hernandez@example.com", "555-444-5555"},
+                {"Oliver", "Lopez", "4", "Oliver.Lopez@example.com", "555-555-6666"},
+                {"Sophia", "Gonzalez", "4", "Sophia.Gonzalez@example.com", "555-666-7777"},
+                {"Lucas", "Wilson", "4", "Lucas.Wilson@example.com", "555-777-8888"},
+                {"Isabella", "Anderson", "4", "Isabella.Anderson@example.com", "555-888-9999"},
+                {"Jack", "Thomas", "4", "Jack.Thomas@example.com", "555-999-0000"},
+                {"Aiden", "Robinson", "4", "Aiden.Robinson@example.com", "555-000-1111"},
+                {"Isabella", "Anderson", "5", "Isabella.Anderson@example.com", "555-111-2222"},
+                {"Jack", "Thomas", "5", "Jack.Thomas@example.com", "555-222-3333"},
+                {"Ava", "Taylor", "5", "Ava.Taylor@example.com", "555-333-4444"},
+                {"Ethan", "Jones", "5", "Ethan.Jones@example.com", "555-444-5555"},
+                {"Sophia", "Brown", "5", "Sophia.Brown@example.com", "555-555-6666"},
+                {"Liam", "Williams", "5", "Liam.Williams@example.com", "555-666-7777"},
+                {"Mia", "Davis", "5", "Mia.Davis@example.com", "555-777-8888"},
+                {"Zoe", "Garcia", "5", "Zoe.Garcia@example.com", "555-888-9999"},
+                {"Max", "Martinez", "5", "Max.Martinez@example.com", "555-999-0000"},
+                {"Emily", "Rodriguez", "5", "Emily.Rodriguez@example.com", "555-000-1111"},
+                {"Jacob", "Wilson", "5", "Jacob.Wilson@example.com", "555-111-2222"},
+                {"Charlotte", "Lopez", "5", "Charlotte.Lopez@example.com", "555-222-3333"},
+                {"Amelia", "Gonzalez", "5", "Amelia.Gonzalez@example.com", "555-333-4444"},
+                {"William", "Hernandez", "5", "William.Hernandez@example.com", "555-444-5555"},
+                {"Elijah", "Lee", "5", "Elijah.Lee@example.com", "555-555-6666"},
+                {"Kathy", "Martin", "6", "Kathy.Martin@example.com", "555-666-7777"},
+                {"Leo", "Jackson", "6", "Leo.Jackson@example.com", "555-777-8888"},
+                {"Sofia", "Thompson", "6", "Sofia.Thompson@example.com", "555-888-9999"},
+                {"Daniel", "Clark", "6", "Daniel.Clark@example.com", "555-999-0000"},
+                {"Olivia", "King", "6", "Olivia.King@example.com", "555-000-1111"},
+                {"Alexander", "Scott", "6", "Alexander.Scott@example.com", "555-111-2222"},
+                {"Avery", "Young", "6", "Avery.Young@example.com", "555-222-3333"},
+                {"Grace", "Harris", "6", "Grace.Harris@example.com", "555-333-4444"},
+                {"Harper", "Lewis", "6", "Harper.Lewis@example.com", "555-444-5555"},
+                {"Scarlett", "Robinson", "6", "Scarlett.Robinson@example.com", "555-555-6666"},
+                {"Aria", "Walker", "6", "Aria.Walker@example.com", "555-666-7777"},
+                {"Layla", "Hall", "6", "Layla.Hall@example.com", "555-777-8888"},
+                {"Gavin", "Allen", "6", "Gavin.Allen@example.com", "555-888-9999"},
+                {"Chloe", "Ward", "6", "Chloe.Ward@example.com", "555-999-0000"},
+                {"Aiden", "Jackson", "6", "Aiden.Jackson@example.com", "555-000-1111"},
+                {"Mia", "Harris", "7", "Mia.Harris@example.com", "555-111-2222"},
+                {"Noah", "Lewis", "7", "Noah.Lewis@example.com", "555-222-3333"},
+                {"Olivia", "Walker", "7", "Olivia.Walker@example.com", "555-333-4444"},
+                {"Aiden", "Adams", "7", "Aiden.Adams@example.com", "555-444-5555"},
+                {"Layla", "Baker", "7", "Layla.Baker@example.com", "555-555-6666"},
+                {"Ella", "Hernandez", "7", "Ella.Hernandez@example.com", "555-666-7777"},
+                {"Sophia", "Thompson", "7", "Sophia.Thompson@example.com", "555-777-8888"},
+                {"James", "Jackson", "7", "James.Jackson@example.com", "555-888-9999"},
+                {"Lucas", "Green", "7", "Lucas.Green@example.com", "555-999-0000"},
+                {"Abigail", "Carter", "7", "Abigail.Carter@example.com", "555-000-1111"},
+                {"Grace", "Scott", "7", "Grace.Scott@example.com", "555-111-2222"},
+                {"Benjamin", "Hall", "7", "Benjamin.Hall@example.com", "555-222-3333"},
+                {"Isabella", "Young", "7", "Isabella.Young@example.com", "555-333-4444"},
+                {"Daniel", "Clark", "7", "Daniel.Clark@example.com", "555-444-5555"},
+                {"Zoe", "Nelson", "7", "Zoe.Nelson@example.com", "555-555-6666"}
         };
+
 
         for (String[] student : students) {
             ContentValues studentValues = new ContentValues();
             studentValues.put(STUDENT_FIRST_NAME, student[0]);
             studentValues.put(STUDENT_LAST_NAME, student[1]);
             studentValues.put(STUDENT_CLASS_ID, student[2]);
+            studentValues.put(STUDENT_EMAIL, student[3]);
+            studentValues.put(STUDENT_PHONE, student[4]);
             long studentResult = db.insert(TABLE_STUDENT, null, studentValues);
             if (studentResult == -1) Log.e("DBHandler", "Failed to insert student data");
         }
@@ -347,63 +329,87 @@ public class DBHandler extends SQLiteOpenHelper {
             if (scheduleResult == -1) Log.e("DBHandler", "Failed to insert schedule data");
         }
 
-        String[][] evaluations = {
-                {"1", "Assignment", "10.00"},
-                {"1", "Quiz", "15.00"}
-        };
-        for (String[] evaluation : evaluations) {
-            ContentValues evaluationValues = new ContentValues();
-            evaluationValues.put(EVALUATION_CLASS_ID, evaluation[0]);
-            evaluationValues.put(EVALUATION_TYPE, evaluation[1]);
-            evaluationValues.put(EVALUATION_PERCENTAGE, evaluation[2]);
-            long evaluationResult = db.insert(TABLE_EVALUATION, null, evaluationValues);
-            if (evaluationResult == -1) Log.e("DBHandler", "Failed to insert evaluation data");
-        }
 
     }
 
-    public ArrayList<String> getData() {
-        ArrayList<String> dataList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + " * " + " FROM " + TABLE_CLASS, null);
 
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                do {
-                    int classNum = cursor.getColumnIndex(CLASS_DIVISION);
-                    int classID = cursor.getColumnIndex(CLASS_ID);
-                    @SuppressLint("Range") String data = "Class " + cursor.getString(classNum) + " (ID: " + cursor.getString(classID) + ")";
-                    dataList.add(data);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-            getStudentData();
-        }
-        db.close();
-        return dataList;
+    public long addEvaluation(int classId, String evalName, String evalType, double evalPercentage) {
+        ContentValues values = new ContentValues();
+        values.put(EVALUATION_CLASS_ID, classId);
+        values.put(EVALUATION_NAME, evalName);
+        values.put(EVALUATION_TYPE, evalType);
+        values.put(EVALUATION_PERCENTAGE, evalPercentage);
+
+        return getWritableDatabase().insert(TABLE_EVALUATION, null, values);
     }
 
-    public ArrayList<String> getStudentData() {
-        ArrayList<String> dataList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(//must query the names before displaying
-                "SELECT " + " * " + " FROM " + TABLE_STUDENT, null);
-        if (cursor != null && cursor.getCount() > 0) {
-            if (cursor.moveToFirst()) {
-                do {
-                    int index1 = cursor.getColumnIndex(STUDENT_FIRST_NAME),
-                            index2 = cursor.getColumnIndex(STUDENT_LAST_NAME),
-                            index3 = cursor.getColumnIndex(STUDENT_CLASS_ID);
-                    @SuppressLint("Range") String data =
-                        cursor.getString(index1) + " " +
-                        cursor.getString(index2) + " (ID: " +
-                        cursor.getString(index3) + ")";
-                    dataList.add(data);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-        }
-        db.close();
-        return dataList;
+    public void recordStudentGrade(int studentId, int evaluationId, double grade) {
+        ContentValues values = new ContentValues();
+        values.put(EVALUATION_STUDENT_ID, studentId);
+        values.put(EVALUATION_ID_REF, evaluationId);
+        values.put(GRADE, grade);
+
+        getWritableDatabase().insert(TABLE_STUDENT_EVALUATION, null, values);
     }
+
+    public int updateEvaluation(String oldEvalName, int classId, String newEvalName, String evalType, double evalPercentage) {
+        ContentValues values = new ContentValues();
+        values.put(EVALUATION_CLASS_ID, classId);
+        values.put(EVALUATION_NAME, newEvalName);
+        values.put(EVALUATION_TYPE, evalType);
+        values.put(EVALUATION_PERCENTAGE, evalPercentage);
+
+        return getWritableDatabase().update(
+                TABLE_EVALUATION,
+                values,
+                EVALUATION_NAME + " = ? AND " + EVALUATION_CLASS_ID + " = ?",
+                new String[]{oldEvalName, String.valueOf(classId)}
+        );
+    }
+
+    public void updateStudentGrades(int studentId, int evaluationId, double grade) {
+        ContentValues values = new ContentValues();
+        values.put(GRADE, grade);
+
+        getWritableDatabase().update(
+                TABLE_STUDENT_EVALUATION,
+                values,
+                EVALUATION_STUDENT_ID + " = ? AND " + EVALUATION_ID_REF + " = ?",
+                new String[]{String.valueOf(studentId), String.valueOf(evaluationId)}
+        );
+    }
+    public int updateEvaluation(int evaluationId, String name, String type, double percentage) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(EVALUATION_NAME, name);
+        values.put(EVALUATION_TYPE, type);
+        values.put(EVALUATION_PERCENTAGE, percentage);
+
+        return db.update(
+                TABLE_EVALUATION,
+                values,
+                EVALUATION_ID + " = ?",
+                new String[]{String.valueOf(evaluationId)}
+        );
+    }
+
+    public void updateOrInsertStudentGrade(int studentId, int evaluationId, double grade) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(EVALUATION_STUDENT_ID, studentId);
+        values.put(EVALUATION_ID_REF, evaluationId);
+        values.put(GRADE, grade);
+
+        int rowsAffected = db.update(
+                TABLE_STUDENT_EVALUATION,
+                values,
+                EVALUATION_STUDENT_ID + " = ? AND " + EVALUATION_ID_REF + " = ?",
+                new String[]{String.valueOf(studentId), String.valueOf(evaluationId)}
+        );
+        if (rowsAffected == 0) {
+            db.insert(TABLE_STUDENT_EVALUATION, null, values);
+        }
+    }
+
+
 }
