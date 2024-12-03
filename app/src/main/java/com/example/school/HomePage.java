@@ -38,14 +38,14 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-//
-//        btnStud.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(HomePage.this, FindStudentPage.class);
-//                startActivity(intent);
-//            }
-//        });
+
+        btnStud.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePage.this, FindStudentPage.class);
+                startActivity(intent);
+            }
+        });
 
         btnEval.setOnClickListener(new View.OnClickListener() {
             @Override
