@@ -42,7 +42,6 @@ public class StudentListAdapter extends SimpleAdapter {
         HashMap<String, String> item = data.get(position);
         String studentId = item.get("studentId");
         holder.studentName.setText(item.get("name"));
-
         ClassManagePage activity = (ClassManagePage) context;
 
         holder.checkAttendance.setOnCheckedChangeListener(null);
@@ -67,7 +66,6 @@ public class StudentListAdapter extends SimpleAdapter {
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) ->
                 activity.checkStates.put(key, isChecked));
     }
-
     private static class ViewHolder {
         TextView studentName;
         CheckBox checkAttendance;

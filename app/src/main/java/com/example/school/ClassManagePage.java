@@ -91,14 +91,12 @@ public class ClassManagePage extends AppCompatActivity {
             String query = "SELECT AttendanceMarked, GoodBehaviorMarked, NoHomeworkMarked, LateMarked, DisruptionMarked " +
                     "FROM DailyRecords WHERE StudentID = ? AND Date = ? AND ClassID = ? AND TimeSlot = ?";
             Cursor cursor = db.rawQuery(query, new String[]{studentId, currentDate, classId, timeSlot});
-
             if (cursor != null && cursor.moveToFirst()) {
                 int attendanceIndex = cursor.getColumnIndexOrThrow("AttendanceMarked");
                 int behaviorIndex = cursor.getColumnIndexOrThrow("GoodBehaviorMarked");
                 int homeworkIndex = cursor.getColumnIndexOrThrow("NoHomeworkMarked");
                 int lateIndex = cursor.getColumnIndexOrThrow("LateMarked");
                 int disruptionIndex = cursor.getColumnIndexOrThrow("DisruptionMarked");
-
                 checkStates.put(studentId + "_attendance", cursor.getInt(attendanceIndex) == 1);
                 checkStates.put(studentId + "_behavior", cursor.getInt(behaviorIndex) == 1);
                 checkStates.put(studentId + "_homework", cursor.getInt(homeworkIndex) == 1);
@@ -120,7 +118,6 @@ public class ClassManagePage extends AppCompatActivity {
     private void saveSelections() {
         SQLiteDatabase db = dbHandler.getWritableDatabase();
         db.beginTransaction();
-
         try {
             db.delete("DailyRecords", "ClassID = ? AND Date = ? AND TimeSlot = ?",
                     new String[]{classId, currentDate, timeSlot});
@@ -130,13 +127,12 @@ public class ClassManagePage extends AppCompatActivity {
                 dailyValues.put("StudentID", studentId);
                 dailyValues.put("ClassID", classId);
                 dailyValues.put("Date", currentDate);
-                dailyValues.put("TimeSlot", timeSlot);  // Add TimeSlot to the record
+                dailyValues.put("TimeSlot", timeSlot);
                 dailyValues.put("AttendanceMarked", checkStates.getOrDefault(studentId + "_attendance", false) ? 1 : 0);
                 dailyValues.put("GoodBehaviorMarked", checkStates.getOrDefault(studentId + "_behavior", false) ? 1 : 0);
                 dailyValues.put("NoHomeworkMarked", checkStates.getOrDefault(studentId + "_homework", false) ? 1 : 0);
                 dailyValues.put("LateMarked", checkStates.getOrDefault(studentId + "_late", false) ? 1 : 0);
                 dailyValues.put("DisruptionMarked", checkStates.getOrDefault(studentId + "_disruption", false) ? 1 : 0);
-
                 db.insert("DailyRecords", null, dailyValues);
                 String updateQuery = "UPDATE Student SET " +
                         "AttendanceCount = (SELECT COUNT(*) FROM DailyRecords WHERE StudentID = ? AND AttendanceMarked = 1), " +
@@ -148,8 +144,7 @@ public class ClassManagePage extends AppCompatActivity {
 
                 db.execSQL(updateQuery, new String[]{studentId, studentId, studentId, studentId, studentId, studentId});
             }
-
-            db.setTransactionSuccessful();
+           db.setTransactionSuccessful();
             Toast.makeText(this, "Changes saved successfully", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, "Error saving changes", Toast.LENGTH_SHORT).show();

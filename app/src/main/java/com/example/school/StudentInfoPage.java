@@ -79,7 +79,6 @@ public class StudentInfoPage extends AppCompatActivity {
             int classIdIndex = cursor.getColumnIndex(DBHandler.STUDENT_CLASS_ID);
             int emailIndex = cursor.getColumnIndex(DBHandler.STUDENT_EMAIL);
             int phoneIndex = cursor.getColumnIndex(DBHandler.STUDENT_PHONE);
-
             String firstName = cursor.getString(nameIndex);
             String lastName = cursor.getString(lastNameIndex);
             txtName.setText(firstName + " " + lastName);
@@ -107,28 +106,52 @@ public class StudentInfoPage extends AppCompatActivity {
         }
     }
     private void calculateDailyRecordsMetrics(int studentId) {
-        String sumQuery = "SELECT " +
-                "SUM(AttendanceMarked) as TotalAttendance, " +
-                "SUM(GoodBehaviorMarked) as TotalGoodBehavior, " +
-                "SUM(DisruptionMarked) as TotalDisruptions, " +
-                "SUM(NoHomeworkMarked) as TotalNoHomework, " +
-                "SUM(LateMarked) as TotalLate " +
-                "FROM DailyRecords " +
-                "WHERE StudentID = ?";
-
-        Cursor dailyRecordsCursor = dbHandler.getReadableDatabase().rawQuery(
-                sumQuery,
-                new String[]{String.valueOf(studentId)}
+        Cursor studentCursor = dbHandler.getReadableDatabase().query(
+                DBHandler.TABLE_STUDENT,
+                new String[]{DBHandler.STUDENT_CLASS_ID},
+                DBHandler.STUDENT_ID + " = ?",
+                new String[]{String.valueOf(studentId)},
+                null, null, null
         );
+        if (studentCursor != null && studentCursor.moveToFirst()) {
+            int classId = studentCursor.getInt(0);
+            studentCursor.close();
+            String totalSessionsQuery = "SELECT COUNT(*) " +
+                    "FROM (SELECT DISTINCT Date, TimeSlot " +
+                    "FROM DailyRecords " +
+                    "WHERE ClassID = ?) as Sessions";
 
-        if (dailyRecordsCursor != null && dailyRecordsCursor.moveToFirst()) {
-            txtAttend.setText(String.valueOf(dailyRecordsCursor.getInt(0)));
-            txtGoodWord.setText(String.valueOf(dailyRecordsCursor.getInt(1)));
-            txtDisrupt.setText(String.valueOf(dailyRecordsCursor.getInt(2)));
-            txtHW.setText(String.valueOf(dailyRecordsCursor.getInt(3)));
-            txtLate.setText(String.valueOf(dailyRecordsCursor.getInt(4)));  // Displaying late count
-
-            dailyRecordsCursor.close();
+            Cursor totalSessionsCursor = dbHandler.getReadableDatabase().rawQuery(
+                    totalSessionsQuery,
+                    new String[]{String.valueOf(classId)}
+            );
+            String metricsQuery = "SELECT " +
+                    "SUM(AttendanceMarked) as TotalAttendance, " +
+                    "SUM(GoodBehaviorMarked) as TotalGoodBehavior, " +
+                    "SUM(DisruptionMarked) as TotalDisruptions, " +
+                    "SUM(NoHomeworkMarked) as TotalNoHomework, " +
+                    "SUM(LateMarked) as TotalLate " +
+                    "FROM DailyRecords " +
+                    "WHERE StudentID = ?";
+            Cursor metricsCursor = dbHandler.getReadableDatabase().rawQuery(
+                    metricsQuery,
+                    new String[]{String.valueOf(studentId)}
+            );
+            if (totalSessionsCursor != null && totalSessionsCursor.moveToFirst() &&
+                    metricsCursor != null && metricsCursor.moveToFirst()) {
+                int totalPossibleSessions = totalSessionsCursor.getInt(0);
+                int attendedSessions = metricsCursor.getInt(0);
+                double attendancePercentage = totalPossibleSessions > 0
+                        ? (attendedSessions * 100.0) / totalPossibleSessions
+                        : 0.0;
+                txtAttend.setText(String.format("%.1f%%", attendancePercentage));
+                txtGoodWord.setText(String.valueOf(metricsCursor.getInt(1)));
+                txtDisrupt.setText(String.valueOf(metricsCursor.getInt(2)));
+                txtHW.setText(String.valueOf(metricsCursor.getInt(3)));
+                txtLate.setText(String.valueOf(metricsCursor.getInt(4)));
+                metricsCursor.close();
+                totalSessionsCursor.close();
+            }
         }
     }
     private void calculateStudentGrades(int studentId, int classId) {
@@ -142,7 +165,7 @@ public class StudentInfoPage extends AppCompatActivity {
                 "ON e." + DBHandler.EVALUATION_ID + " = se." + DBHandler.EVALUATION_ID_REF +
                 " AND se." + DBHandler.EVALUATION_STUDENT_ID + " = ? " +
                 "WHERE e." + DBHandler.EVALUATION_CLASS_ID + " = ?";
-        Cursor gradeCursor = dbHandler.getReadableDatabase().rawQuery(
+       Cursor gradeCursor = dbHandler.getReadableDatabase().rawQuery(
                 gradeQuery,
                 new String[]{String.valueOf(studentId), String.valueOf(classId)}
         );

@@ -44,7 +44,6 @@ public class SchedulePage extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         btnGoBack = findViewById(R.id.btnGoBack);
         btnPrevDay = findViewById(R.id.btnPrevDay);
         btnNextDay = findViewById(R.id.btnNextDay);
@@ -52,14 +51,12 @@ public class SchedulePage extends AppCompatActivity {
         noClassesText = findViewById(R.id.noClassesText);
         dateText = findViewById(R.id.dateText);
         dbHandler = new DBHandler(this);
-
         currentDate = Calendar.getInstance();
         if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-            currentDate.add(Calendar.DATE, 2); // Skip to Monday
+            currentDate.add(Calendar.DATE, 2);
         } else if (currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-            currentDate.add(Calendar.DATE, 1); // Skip to Monday
+            currentDate.add(Calendar.DATE, 1);
         }
-
         updateDateDisplay();
         loadSchedule();
         btnPrevDay.setOnClickListener(v -> navigateDay(-1));

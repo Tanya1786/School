@@ -1,5 +1,6 @@
 package com.example.school;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,7 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
+import android.content.ContentValues;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -38,12 +39,14 @@ public class AddEvalsPage extends AppCompatActivity {
         setContentView(R.layout.activity_add_evals_page);
         dbHandler = new DBHandler(this);
         initializeViews();
-        isEditMode = getIntent().getBooleanExtra("EDIT_EVAL_MODE", false);
+
+     isEditMode = getIntent().getBooleanExtra("EDIT_EVAL_MODE", false);
         if (isEditMode) {
             selectedDivision = getIntent().getStringExtra("DIVISION");
             selectedEvalName = getIntent().getStringExtra("EVALUATION_NAME");
             loadExistingEvaluation();
         }
+
         setupSpinners();
         setupButtons();
     }
@@ -56,9 +59,11 @@ public class AddEvalsPage extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         backButton = findViewById(R.id.backButton);
     }
+
     private void setupSpinners() {
         populateDivisionSpinner();
         populateEvalTypeSpinner();
+
         divisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -72,6 +77,7 @@ public class AddEvalsPage extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
+
     private void setupButtons() {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +85,7 @@ public class AddEvalsPage extends AppCompatActivity {
                 saveEvaluation();
             }
         });
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +96,6 @@ public class AddEvalsPage extends AppCompatActivity {
     private void populateDivisionSpinner() {
         List<String> divisions = new ArrayList<>();
         divisions.add("Select Division");
-
         Cursor cursor = dbHandler.getReadableDatabase().query(
                 DBHandler.TABLE_CLASS,
                 new String[]{DBHandler.CLASS_DIVISION},
@@ -110,15 +116,8 @@ public class AddEvalsPage extends AppCompatActivity {
         divisionSpinner.setSelection(0, false);
     }
     private void populateEvalTypeSpinner() {
-        String[] evalTypes = {
-                "Select Evaluation Type",
-                "Midterm",
-                "Final exam",
-                "Homework",
-                "Quiz",
-                "Assignment",
-                "Behavior"
-        };
+        String[] evalTypes = {"Select Evaluation Type","Midterm","Final exam",
+                "Homework","Quiz","Assignment","Behavior"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
@@ -128,6 +127,7 @@ public class AddEvalsPage extends AppCompatActivity {
         evalTypeSpinner.setAdapter(adapter);
         evalTypeSpinner.setSelection(0, false);
     }
+
     private void loadExistingEvaluation() {
         Cursor evalCursor = dbHandler.getReadableDatabase().rawQuery(
                 "SELECT e." + DBHandler.EVALUATION_ID + ", e." + DBHandler.EVALUATION_TYPE +
@@ -166,6 +166,7 @@ public class AddEvalsPage extends AppCompatActivity {
         }
         evalCursor.close();
     }
+
     private void loadStudentsForDivision(String division) {
         studentList = new ArrayList<>();
         String query = "SELECT s." + DBHandler.STUDENT_ID +
@@ -173,19 +174,22 @@ public class AddEvalsPage extends AppCompatActivity {
                 ", s." + DBHandler.STUDENT_LAST_NAME +
                 ", se." + DBHandler.GRADE +
                 " FROM " + DBHandler.TABLE_STUDENT + " s" +
-                " LEFT JOIN " + DBHandler.TABLE_CLASS + " c ON s." + DBHandler.STUDENT_CLASS_ID + " = c." + DBHandler.CLASS_ID +
-                " LEFT JOIN " + DBHandler.TABLE_STUDENT_EVALUATION + " se" +
-                " ON s." + DBHandler.STUDENT_ID + " = se." + DBHandler.EVALUATION_STUDENT_ID +
-                " AND se." + DBHandler.EVALUATION_ID_REF + " = " + evaluationId +
-                " WHERE c." + DBHandler.CLASS_DIVISION + " = ?";
-
+                " LEFT JOIN " + DBHandler.TABLE_CLASS + " c ON s." + DBHandler.STUDENT_CLASS_ID + " = c." + DBHandler.CLASS_ID;
+        if (isEditMode && evaluationId != -1) {
+            query += " LEFT JOIN " + DBHandler.TABLE_STUDENT_EVALUATION + " se" +
+                    " ON s." + DBHandler.STUDENT_ID + " = se." + DBHandler.EVALUATION_STUDENT_ID +
+                    " AND se." + DBHandler.EVALUATION_ID_REF + " = " + evaluationId;
+        } else {
+            query += " LEFT JOIN " + DBHandler.TABLE_STUDENT_EVALUATION + " se ON 1=0";
+        }
+        query += " WHERE c." + DBHandler.CLASS_DIVISION + " = ?";
         Cursor cursor = dbHandler.getReadableDatabase().rawQuery(query, new String[]{division});
         while (cursor.moveToNext()) {
             Map<String, String> student = new HashMap<>();
             student.put("StudentID", cursor.getString(0));
             student.put("FirstName", cursor.getString(1));
             student.put("LastName", cursor.getString(2));
-            if (!cursor.isNull(3)) {
+            if (isEditMode && !cursor.isNull(3)) {
                 student.put("Grade", String.valueOf(cursor.getDouble(3)));
             }
             studentList.add(student);
@@ -215,6 +219,7 @@ public class AddEvalsPage extends AppCompatActivity {
         String evalType = evalTypeSpinner.getSelectedItem().toString();
         String evalName = evalNameET.getText().toString();
         String evalPercentStr = evalPercentET.getText().toString();
+
         if (evalName.isEmpty() || evalPercentStr.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
@@ -227,7 +232,6 @@ public class AddEvalsPage extends AppCompatActivity {
                 new String[]{division},
                 null, null, null
         );
-
         if (classCursor.moveToFirst()) {
             int classId = classCursor.getInt(0);
             classCursor.close();
@@ -240,32 +244,50 @@ public class AddEvalsPage extends AppCompatActivity {
                         new Object[]{evalType, evalPercent, evaluationId}
                 );
             } else {
-                dbHandler.getWritableDatabase().execSQL(
-                        "INSERT INTO " + DBHandler.TABLE_EVALUATION + " (" +
-                                DBHandler.EVALUATION_NAME + ", " +
-                                DBHandler.EVALUATION_TYPE + ", " +
-                                DBHandler.EVALUATION_CLASS_ID + ", " +
-                                DBHandler.EVALUATION_PERCENTAGE +
-                                ") VALUES (?, ?, ?, ?)",
-                        new Object[]{evalName, evalType, classId, evalPercent}
+                long newEvaluationId = dbHandler.getWritableDatabase().insert(
+                        DBHandler.TABLE_EVALUATION,
+                        null,
+                        contentValues(evalName, evalType, classId, evalPercent)
                 );
+                evaluationId = (int) newEvaluationId;
             }
             saveGradesForStudents(evalName);
             finish();
         }
         classCursor.close();
     }
+    private ContentValues contentValues(String evalName, String evalType, int classId, double evalPercent) {
+        ContentValues values = new ContentValues();
+        values.put(DBHandler.EVALUATION_NAME, evalName);
+        values.put(DBHandler.EVALUATION_TYPE, evalType);
+        values.put(DBHandler.EVALUATION_CLASS_ID, classId);
+        values.put(DBHandler.EVALUATION_PERCENTAGE, evalPercent);
+        return values;
+    }
     private void saveGradesForStudents(String evalName) {
+        dbHandler.getWritableDatabase().delete(
+                DBHandler.TABLE_STUDENT_EVALUATION,
+                DBHandler.EVALUATION_ID_REF + " = ?",
+                new String[]{String.valueOf(evaluationId)}
+        );
         for (Map<String, String> student : studentList) {
             String grade = student.get("Grade");
-            if (grade != null) {
-                dbHandler.getWritableDatabase().execSQL(
-                        "INSERT OR REPLACE INTO " + DBHandler.TABLE_STUDENT_EVALUATION +
-                                " (" + DBHandler.EVALUATION_STUDENT_ID + ", " +
-                                DBHandler.EVALUATION_ID_REF + ", " +
-                                DBHandler.GRADE + ") VALUES (?, ?, ?)",
-                        new Object[]{student.get("StudentID"), evaluationId, grade}
-                );
+            if (grade != null && !grade.trim().isEmpty()) {
+                try {
+                    double gradeValue = Double.parseDouble(grade);
+                    ContentValues values = new ContentValues();
+                    values.put(DBHandler.EVALUATION_STUDENT_ID, student.get("StudentID"));
+                    values.put(DBHandler.EVALUATION_ID_REF, evaluationId);
+                    values.put(DBHandler.GRADE, gradeValue);
+
+                    dbHandler.getWritableDatabase().insert(
+                            DBHandler.TABLE_STUDENT_EVALUATION,
+                            null,
+                            values
+                    );
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Invalid grade for " + student.get("FirstName") + " " + student.get("LastName"), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

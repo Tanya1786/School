@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class HomePage extends AppCompatActivity {
-    //schedule button, find student button, evaluation button & logout button
     Button btnSchedule, btnStud, btnEval, btnLogout;
 
     @Override
@@ -54,7 +53,6 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
